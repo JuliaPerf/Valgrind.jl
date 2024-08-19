@@ -1,0 +1,9 @@
+name = "Valgrind"
+uuid = "a52a33a2-b08a-4c46-b084-8041b090a67d"
+authors = ["Valentin Churavy <v.churavy@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+CEnum = "fa961155-64e5-5f13-b03f-caf6b980ea82"
+LLVM = "929cbde3-209d-540e-8aea-75f648917ca0"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
