@@ -15,3 +15,25 @@ if Valgrind.running_on_valgrind() == 0
     @test success(pipeline(callgrind(jlcmd), stdout=stdout, stderr=stderr))
     exit()
 end
+
+@noinline function g(a)
+    c = 0
+    for x in a
+        if x > 0
+            c += 1
+        end
+    end
+    c
+end
+const data = zeros(10000)
+g(data)
+
+function harness(f::F, name, args...) where F
+    Valgrind.Callgrind.zero_stats()
+    Valgrind.Callgrind.start_instrumentation()
+    @noinline f(args...)
+    Valgrind.Callgrind.stop_instrumentation()
+    Valgrind.Callgrind.dump_stats_at(name)
+end
+
+harness(g, "test_g", data)

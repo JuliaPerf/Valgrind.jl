@@ -23,7 +23,7 @@ end
 
 
 @inline function client_request_stmt(request, arg1, arg2, arg3, arg4, arg5)
-    client_request_expr(0, request, arg1, arg2, arg3, arg4, arg5)
+    client_request_expr(0, Int(request), arg1, arg2, arg3, arg4, arg5)
     nothing
 end
 
@@ -118,9 +118,13 @@ module Callgrind
         client_request_stmt(VG_USERREQ__DUMP_STATS, 0, 0, 0, 0, 0)
     end
 
-    # function dump_stats_at(pos_str)
-    #     client_request_stmt(VG_USERREQ__DUMP_STATS_AT, pos_str, 0, 0, 0, 0)
-    # end
+    function dump_stats_at(pos_str)
+        c_pos_str = Base.cconvert(Ptr{Cchar}, pos_str)
+        GC.@preserve c_pos_str begin
+            ptr = Base.unsafe_convert(Ptr{Cchar}, c_pos_str)
+            client_request_stmt(VG_USERREQ__DUMP_STATS_AT, reinterpret(Int, ptr), 0, 0, 0, 0)
+        end
+    end
     
     function zero_stats()
         client_request_stmt(VG_USERREQ__ZERO_STATS, 0, 0, 0, 0, 0)
